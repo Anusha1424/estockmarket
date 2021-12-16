@@ -27,11 +27,13 @@ public class JwtTokenFilter extends GenericFilterBean {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) req);
-        if(token.contains("Bearer")) {
-    		token = token.replace("Bearer", "");
-    		token = token.trim();
-    	}
+      
         if (token != null) {
+        	if(token.contains("Bearer")) {
+          		token = token.replace("Bearer", "");
+          		token = token.trim();
+          	}
+        	  
             if (!jwtTokenProvider.isTokenPresentInDB(token)) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Invalid JWT token");
                 throw new CustomException("Invalid JWT token",HttpStatus.UNAUTHORIZED);
