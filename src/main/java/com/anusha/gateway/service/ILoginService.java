@@ -11,4 +11,5 @@ public interface ILoginService {
     Boolean isValidToken(String token);
 
     String createNewToken(String token);
+    public User getUser(String username)throws Exception;
 }

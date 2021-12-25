@@ -79,4 +79,16 @@ public class LoginService implements ILoginService
         String newToken =  jwtTokenProvider.createToken(username,roleList);
         return newToken;
     }
+    
+    @Override
+    public User getUser(String username)throws Exception{
+    	User user = new User();
+    	try {
+    		user = userRepository.findByEmail(username);
+    		
+    	}catch (Exception e) {
+			// TODO: handle exception
+		}
+        return user;
+    }
 }

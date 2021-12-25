@@ -44,8 +44,8 @@ public class JwtTokenProvider {
 
         Claims claims = Jwts.claims().setSubject(username);
         claims.put(AUTH,roles);
-
-        Date now = new Date();
+        long nowMillis = System.currentTimeMillis();
+        Date now = new Date(nowMillis);
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
         String token =  Jwts.builder()//

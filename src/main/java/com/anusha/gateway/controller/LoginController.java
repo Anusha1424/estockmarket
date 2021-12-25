@@ -2,16 +2,21 @@ package com.anusha.gateway.controller;
 
 import com.anusha.gateway.bean.auth.AuthResponse;
 import com.anusha.gateway.bean.auth.LoginRequest;
+import com.anusha.gateway.bean.auth.User;
 import com.anusha.gateway.service.ILoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/api")
@@ -58,8 +63,21 @@ public class LoginController {
      */
     @PostMapping("/valid/token")
     @ResponseBody
-    public Boolean isValidToken (@RequestHeader(value="Authorization") String token) {
-        return true;
+    public ResponseEntity<Map<String, Object>> isValidToken (@RequestHeader(value="Authorization") String token) throws Exception {
+    	Map<String, Object> response =new HashMap<>();
+    	try {
+    		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                    .getPrincipal();
+			String username = userDetails.getUsername();
+			System.out.println(username);
+			User user = new User();
+			user = iLoginService.getUser(username);
+			response.put("user", user);
+			
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 
 
@@ -81,4 +99,5 @@ public class LoginController {
         headers.set("Authorization", newToken);
         return new ResponseEntity<AuthResponse>(new AuthResponse(newToken), headers, HttpStatus.CREATED);
     }
+    
 }
